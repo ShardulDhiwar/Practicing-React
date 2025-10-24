@@ -1,0 +1,24 @@
+REACT ROADMAP:
+
+    2. Why to Learn React?
+        a. Build Dynamic UI.
+        b. Reusable components
+        c. Virtual DOM.
+        d. Great Career Growth
+
+    3. Project based Learning Approach
+
+    4. Core Concepts 
+        a. Hooks
+        b. JSX
+        c. components
+        d. Props
+        e. States
+
+    5. Additional Addons
+        a. React Router
+        b. Context APIs
+        c. BAAS
+
+    6. Whats After React?
+        - Can do NEXTJS, Remix etc 
