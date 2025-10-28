@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -7,27 +7,35 @@ function App() {
   const [isSymAllowed, setIsSymAllowed] = useState(false);
   const [password, setPassword] = useState("");
 
-  useCallback(() => { }, [length, isNumAllowed, isSymAllowed]);
+  const passwordRef = useRef(null);
+
+  const passwordGenerator = useCallback(() => {
+       let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+       if (isNumAllowed) {
+         chars += "0123456789";
+       }
+       if (isSymAllowed) {
+         chars += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+       }
+
+       let newpassword = "";
+       for (let i = 0; i < length; i++) {
+         const randomIndex = Math.floor(Math.random() * chars.length);
+         newpassword += chars[randomIndex];
+       }
+       setPassword(newpassword);
+  }, [length, isNumAllowed, isSymAllowed]);
+  
+  const copyToClipboard = () => {
+    passwordRef.current.select();
+    navigator.clipboard.writeText(password);
+  }
 
   useEffect(() => {
-    const passwordGenerator = () => {
-      let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      if (isNumAllowed) {
-        chars += "0123456789";
-      }
-      if (isSymAllowed) {
-        chars += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
-      }
-
-      let password = "";
-      for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        password += chars[randomIndex];
-      }
-      setPassword(password);
-    };
     passwordGenerator();
-  }, [password]);
+  }, [passwordGenerator]);
+
+  
 
   return (
     <>
@@ -40,8 +48,13 @@ function App() {
             type="text"
             placeholder="Password"
             className="rounded-l-full w-150 p-5 bg-white text-2xl"
+            value={password}
+            readOnly
+            ref={passwordRef}
           />
-          <button className="rounded-r-full bg-blue-500 w-25 text-2xl hover:bg-green-500 p-5 text-white">
+          <button className="rounded-r-full bg-blue-500 w-25 text-2xl hover:bg-green-500 p-5 text-white"
+           onClick={copyToClipboard}
+          >
             Copy
           </button>
         </div>
@@ -52,7 +65,7 @@ function App() {
             min={10}
             max={30}
             value={length}
-            onChange={(e) => setLength(e.target.value)}
+            onChange={(e) => setLength(Number(e.target.value))}
           />
           <label htmlFor="strLength" className="p-3 text-2xl">
             Length {length}
@@ -61,7 +74,7 @@ function App() {
           <input
             type="checkbox"
             id="Number"
-            onchecked={() => setIsSymAllowed((prev) => !prev)}
+            onChange={() => setIsNumAllowed((prev) => !prev)}
             className="w-5 h-5 accent-green-500"
           />
           <label htmlFor="Number" className="p-3 text-2xl">
@@ -71,7 +84,7 @@ function App() {
           <input
             type="checkbox"
             id="Symbols"
-            onchecked={() => setIsNumAllowed((prev) => !prev)}
+            onChange={() => setIsSymAllowed((prev) => !prev)}
             className="w-5 h-5 accent-green-500"
           />
           <label htmlFor="Symbols" className="p-3 text-2xl">
